@@ -24,6 +24,7 @@ angular.module('app', []);
 			var lastValue;
 
 			ctrl.$parsers.push(function(value) {
+				var initialValue = value;
 				// Remove all spaces and commas
 				value = value.replace(/\ |\,/g, '');
 
@@ -34,14 +35,19 @@ angular.module('app', []);
 
 				// Check if the value passes our restrictions on currency
 				if (!currencyRegex.test(value)) {
-					value = lastValue
+					value = lastValue          			
 				} else {
 					lastValue = value;
 				}
 
+				var el = element[0],
+					cursorPos = el.selectionStart + value.length - initialValue.length;
+
 				// Update the value in the view
 				ctrl.$setViewValue(value)
           		ctrl.$render()
+
+          		el.setSelectionRange(cursorPos, cursorPos);
 
 				return value;
 			});
