@@ -1,74 +1,74 @@
 angular.module('app', []);
 
 (function() {
-	'use strict';
+    'use strict';
 
-	angular
-		.module('app')
-		.directive('restrictToCurrency', restrictToCurrency);
+    angular
+    .module('app')
+    .directive('restrictToCurrency', restrictToCurrency);
 
-	restrictToCurrency.$inject = ['$filter'];
+    restrictToCurrency.$inject = ['$filter'];
 
-	function restrictToCurrency($filter) {
+    function restrictToCurrency($filter) {
 
-		var directive = {
-			restrict: 'A',
-			require: 'ngModel',
-			link: restrictToCurrencyLink
-		}
+        var directive = {
+            restrict: 'A',
+            require: 'ngModel',
+            link: restrictToCurrencyLink
+        };
 
-		return directive;
+        return directive;
 
-		function restrictToCurrencyLink(scope, element, attrs, ctrl) {
-			
-			var lastValue;
+        function restrictToCurrencyLink(scope, element, attrs, ctrl) {
 
-			ctrl.$parsers.push(function(value) {
-				var initialValue = value;
-				// Remove all spaces and commas
-				value = value.replace(/\ |\,/g, '');
+            var lastValue;
 
-				// Add commas back in at correct places
-				value = value.replace(/(\d)(?=(\d\d\d)+(?!\d))/g, '$1,');
+            ctrl.$parsers.push(function(value) {
+                var initialValue = value;
+                // Remove all spaces and commas
+                value = value.replace(/\ |\,/g, '');
 
-				var currencyRegex = /^([0]?|[1-9]\d{0,2}|[1-9]?\d{1}\,?\d{3})(\.\d{0,2}?)?$/;
+                // Add commas back in at correct places
+                value = value.replace(/(\d)(?=(\d\d\d)+(?!\d))/g, '$1,');
 
-				// Check if the value passes our restrictions on currency
-				if (!currencyRegex.test(value)) {
-					value = lastValue          			
-				} else {
-					lastValue = value;
-				}
+                var currencyRegex = /^([0]?|[1-9]\d{0,2}|[1-9]?\d{1}\,?\d{3})(\.\d{0,2}?)?$/;
 
-				var el = element[0],
-					cursorPos = el.selectionStart + value.length - initialValue.length;
+                // Check if the value passes our restrictions on currency
+                if (!currencyRegex.test(value)) {
+                    value = lastValue;
+                } else {
+                    lastValue = value;
+                }
 
-				// Update the value in the view
-				ctrl.$setViewValue(value)
-          		ctrl.$render()
+                var el = element[0],
+                cursorPos = el.selectionStart + value.length - initialValue.length;
 
-          		el.setSelectionRange(cursorPos, cursorPos);
+                // Update the value in the view
+                ctrl.$setViewValue(value);
+                ctrl.$render();
 
-				return value;
-			});
+                el.setSelectionRange(cursorPos, cursorPos);
 
-			element.bind('blur', function() {
-				// Don't form currency if the field is empty
-				if (typeof ctrl.$viewValue === 'undefined' || !ctrl.$viewValue.length) {
-					return;
-				}
+                return value;
+            });
 
-				// Remove all commas 
-				var valueNoCommas = ctrl.$viewValue.replace(/\,/g, '');
+            element.bind('blur', function() {
+                // Don't form currency if the field is empty
+                if (typeof ctrl.$viewValue === 'undefined' || !ctrl.$viewValue.length) {
+                    return;
+                }
 
-				// Convert the number to a properly formatted currency
-				var valueAsCurrency = $filter('currency')(valueNoCommas, '');
+                // Remove all commas
+                var valueNoCommas = ctrl.$viewValue.replace(/\,/g, '');
 
-				// Update the value in the view
-				ctrl.$setViewValue(valueAsCurrency)
-          		ctrl.$render()
-			});
-		}
-	}
+                // Convert the number to a properly formatted currency
+                var valueAsCurrency = $filter('currency')(valueNoCommas, '');
+
+                // Update the value in the view
+                ctrl.$setViewValue(valueAsCurrency);
+                ctrl.$render();
+            });
+        }
+    }
 
 })();
