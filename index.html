@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Currency Validation</title>
+		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.9/angular.js"></script>
+		<script src="restrict-to-currency.directive.js"></script>
+		<style>
+			.currency-field {
+				text-align: right;
+			}
+		</style>
+	</head>
+	<body ng-app="app">
+		<input restrict-to-currency 
+			class="currency-field" 
+			placeholder="0.00" 
+			ng-trim="false" 
+			ng-model="myModel">
+	</body>
+</html>
